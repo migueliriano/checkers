@@ -3,70 +3,12 @@
 <html>
 	<head>
 		<link rel="stylesheet" href="style.css">
+		
 	</head>
 	
 	<body>
 		<div id="board"></div>
-		<script>
-			
-			//This k variable will determinate how the bloc has to change color differently
-			//For exemle when k = 0, the white block will add first and the black will be the second in the first row
-			//And when k = 1, the black will add first and the black will be the second to be added in the second row and so on...
-			var k = 0;
-
-			// This l variable will determinate the changing of the bloc color in a row.  
-			var l = 0;
-
-			for (var i = 0; i < 8; i++) {
-				//Creating a row for each loop
-				var row = document.createElement('div');
-				row.style.cssText = 'display: table-row; z-index: -1;';
-
-				//This loop will add 8 blocks in each row
-				for(var j = 0; j < 8; j++ ){
-					
-					
-						var bloc = document.createElement('div');
-
-						if(k==0){
-							if(l==0){
-								bloc.style.cssText = 'margin: 0%; width:50px; height:50px; background-color:#8B4500; display: table-cell;';
-
-								l=1;
-							}else{
-								bloc.style.cssText = 'margin: 0%; width:50px; height:50px; background-color:black; display: table-cell;';
-								
-								l=0;
-							}
-						}else{
-							if(l==0){
-								bloc.style.cssText = 'margin: 0%; width:50px; height:50px; background-color:black; display: table-cell;';
-								l=1;
-							}else{
-								bloc.style.cssText = 'margin: 0%; width:50px; height:50px; background-color:#8B4500; display: table-cell;';
-								l=0;
-							}
-						}
-
-						bloc.className = i+''+j;
-						row.appendChild(bloc);
-
-				}
-
-				if(k==0){k = 1;}else{k=0;}
-				
-				//When 8 blocks are in a row, we add it in the board div
-				document.getElementById('board').appendChild(row);
-
-			}
-
-			
-			
-
-							
-			
-		</script>
-		
+		<script type="text/javascript" src="scripts.js"></script>
 	
 	</body>
 	
