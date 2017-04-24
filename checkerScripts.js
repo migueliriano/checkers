@@ -15,30 +15,27 @@ for (var i = 0; i < 8; i++) {
 			if(rowChangeColor==0){
 
 				if(boxChangeColor==0){
-					bloc.id = 'white-box';
+					bloc.className = 'white-box';
 					boxChangeColor=1;
 
 				}else{
-					bloc.id = 'black-box';
+					bloc.className = 'black-box';
 					boxChangeColor=0;
 				}
-				
 			}else{
 
 				if(boxChangeColor==0){
-					bloc.id = 'black-box';
+					bloc.className = 'black-box';
 					boxChangeColor=1;
 				}else{
-					bloc.id = 'white-box';
+					bloc.className = 'white-box';
 					boxChangeColor=0;
 				}
-
-				
+			
 			}
 			row.appendChild(bloc);
 	}
-
-	if(rowChangeColor==0){rowChangeColor = 1;}else{rowChangeColor=0;}
+	rowChangeColor = (rowChangeColor==0) ? 1:0;
 	
 	//When 8 blocks are in a row, we add it in the board div
 	document.getElementById('board').appendChild(row);
@@ -55,24 +52,25 @@ for(var i = 0; i<8; i++){
 		if(i<3){
 			var pieceWhite = document.createElement("div");
 			if(i%2==0 && j%2==0){
-				pieceWhite.id = 'white-piece';
+				pieceWhite.className = 'white-piece';
 				boardRowChildren[i].children[j].appendChild(pieceWhite);
 
 			}else if(i%2!=0 && j%2!=0){
-				pieceWhite.id = 'white-piece';
+				pieceWhite.className = 'white-piece';
 				boardRowChildren[i].children[j].appendChild(pieceWhite);
 			}
-
+			
+ 		
 
 		//The black pieces -------------------------------------
 		}else if(i>=5){
 			var pieceBlack = document.createElement("div");
 			if(i%2!=0 && j%2!=0){
-				pieceBlack.id = 'black-piece';
+				pieceBlack.className = 'black-piece';
 				boardRowChildren[i].children[j].appendChild(pieceBlack);
 
 			}else if(i%2==0 && j%2==0){
-				pieceBlack.id = 'black-piece';
+				pieceBlack.className = 'black-piece';
 				boardRowChildren[i].children[j].appendChild(pieceBlack);
 			}
 		}
