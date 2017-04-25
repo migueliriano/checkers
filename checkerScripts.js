@@ -19,24 +19,24 @@ function createCheckersBoard(){
 		for(var j = 0; j < 8; j++ ){
 				var bloc = row.insertCell();
 
-				if(rowChangeColor==0){
+				if(rowChangeColor == 0){
 
-					if(boxChangeColor==0){
+					if(boxChangeColor == 0){
 						bloc.className = 'white-box';
-						boxChangeColor=1;
+						boxChangeColor = 1;
 
 					}else{
 						bloc.className = 'black-box';
-						boxChangeColor=0;
+						boxChangeColor = 0;
 					}
 				}else{
 
-					if(boxChangeColor==0){
+					if(boxChangeColor == 0){
 						bloc.className = 'black-box';
-						boxChangeColor=1;
+						boxChangeColor = 1;
 					}else{
 						bloc.className = 'white-box';
-						boxChangeColor=0;
+						boxChangeColor = 0;
 					}
 				
 				}
@@ -45,7 +45,7 @@ function createCheckersBoard(){
 				bloc.onclick = getPieceMovement;
 		}
 
-		rowChangeColor = (rowChangeColor==0) ? 1:0;
+		rowChangeColor = (rowChangeColor == 0) ? 1:0;
 
 	}
 }
@@ -54,25 +54,24 @@ function createCheckersBoard(){
 function addPiecesOnBoard(){
 	var tbody = document.getElementById('board').children;
 	var boardRowChildren = tbody[0].children;
-	//console.log(boardRowChildren[0].children[0]);
 
-	for(var i = 0; i<8; i++){
-		for(var j = 0; j<8; j++){
+	for(var i = 0; i < 8; i++){
+		for(var j = 0; j < 8; j++){
 
 			//The white pieces -------------------------------------
 			if(i<3){
 				var pieceWhite = document.createElement("div");
-				if(i%2==0 && j%2==0){
+				if(i%2 == 0 && j%2 == 0){
 					pieceWhite.className = 'white-piece';
 					boardRowChildren[i].children[j].appendChild(pieceWhite);
 
-				}else if(i%2!=0 && j%2!=0){
+				}else if(i%2 != 0 && j%2 != 0){
 					pieceWhite.className = 'white-piece';
 					boardRowChildren[i].children[j].appendChild(pieceWhite);
 				}
 
 			//The black pieces -------------------------------------
-			}else if(i>=5){
+			}else if(i >= 5){
 				var pieceBlack = document.createElement("div");
 				if(i%2!=0 && j%2!=0){
 					pieceBlack.className = 'black-piece';
@@ -90,14 +89,16 @@ function addPiecesOnBoard(){
 
 
 
-var board = [[-1, 0,-1, 0,-1, 0,-1, 0],
+var board = [
+			 [-1, 0,-1, 0,-1, 0,-1, 0],
 		     [ 0,-1, 0,-1, 0,-1, 0,-1],
 			 [-1, 0,-1, 0,-1, 0,-1, 0],
 			 [ 0, 0, 0, 0, 0, 0, 0, 0],
 			 [ 0, 0, 0, 0, 0, 0, 0, 0],
 			 [ 0, 1, 0, 1, 0, 1, 0, 1],
 			 [ 1, 0, 1, 0, 1, 0, 1, 0],
-			 [ 0, 1, 0, 1, 0, 1, 0, 1]];
+			 [ 0, 1, 0, 1, 0, 1, 0, 1]
+			];
 
 var isSelected = false;
 var selectedPiece = null;
@@ -110,49 +111,47 @@ function getPieceMovement(){
 	var coordX = parseInt($(this).attr('name')[0]);
 	var coordY = parseInt($(this).attr('name')[1]);
 	
-	
-	if(board[coordX][coordY]==1){
-		var topLeftBoxIndex = ((coordX > 0) && (coordY > 0)) ? (coordX-1)+''+(coordY-1) : null;
-		var topRightBoxIndex = (coordX > 0) ? (coordX-1)+''+(coordY+1) : null;
-		selectedPiece = coordX+''+coordY;
-
-		coloredPiecePlaces(topLeftBoxIndex, topRightBoxIndex);
+	if(board[coordX][coordY] == 1){
+		getleftRightIndex(coordX, coordY, coordX-1, coordY-1, coordX-1, coordY+1);
+		selectedPiece = coordX + '' + coordY;
 		selectedPieceColor = 1;
 
-	}else if(board[coordX][coordY]==-1){
-		var bottomLeftBoxIndex = ((coordX > 0) && (coordY > 0)) ? (coordX+1)+''+(coordY-1) : null;
-		var bottomRightBoxIndex = (coordX > 0) ? (coordX+1)+''+(coordY+1) : null;
+	}else if(board[coordX][coordY] == -1){
+		getleftRightIndex(coordX, coordY, coordX+1, coordY-1, coordX+1, coordY+1);
 		selectedPiece = coordX+''+coordY;
-
-		coloredPiecePlaces(bottomLeftBoxIndex, bottomRightBoxIndex);
 		selectedPieceColor = -1;
 	}
 	
 	if(isSelected){
-		if(rigthPiecePlace==coordX+''+coordY)
-			moveSelectedPiece(coordX+''+coordY, rigthPiecePlace, selectedPieceColor);
-		if(leftPiecePlace==coordX+''+coordY)
-			moveSelectedPiece(coordX+''+coordY, leftPiecePlace, selectedPieceColor);
+		if(rigthPiecePlace == (coordX + '' + coordY) )
+			moveSelectedPiece(coordX + '' + coordY, rigthPiecePlace, selectedPieceColor);
+		if(leftPiecePlace == (coordX + '' + coordY) )
+			moveSelectedPiece(coordX + '' + coordY, leftPiecePlace, selectedPieceColor);
 	}
 
 	isSelected = true;
 }
 
+function getleftRightIndex(crdX, crdY, leftCoordX, leftCoordY, rightCoordX, rightCoordY){
+	var topLeftBoxIndex = ((crdX > 0) && (crdY > 0)) ? (leftCoordX + '' + leftCoordY) : null;
+	var topRightBoxIndex = (crdX > 0) ? (rightCoordX + '' + rightCoordY) : null;
 
+	coloredPiecePlaces(topLeftBoxIndex, topRightBoxIndex);
+}
 
 function coloredPiecePlaces(left, right) {
-	if(left!= null)
-		if( board[left[0]][left[1]]==0){
+	if(left != null)
+		if( board[left[0]][left[1]] == 0){
 			$(this).css("background-color", "yellow");
-			$('.white-box[name='+left+']').css("background-color", "yellow");
+			$('.white-box[name=' + left + ']').css("background-color", "yellow");
 			leftPiecePlace = left;
 		}
 
 
-	if(right!= null)
-		if(board[right[0]][right[1]]==0){
+	if(right != null)
+		if(board[right[0]][right[1]] == 0){
 			$(this).css("background-color", "yellow");
-			$('.white-box[name='+right+']').css("background-color", "yellow");
+			$('.white-box[name=' + right + ']').css("background-color", "yellow");
 			rigthPiecePlace = right;		
 	}
 
@@ -162,24 +161,24 @@ function coloredPiecePlaces(left, right) {
 
 function moveSelectedPiece(currentPiecePlace, newPiecePlace, pieceColor){
 	if(selectedPiece != null){
-		if(newPiecePlace== currentPiecePlace ){
-			$('.white-box[name='+selectedPiece+']').children().remove();
+		if(newPiecePlace == currentPiecePlace ){
+			$('.white-box[name=' + selectedPiece + ']').children().remove();
 			board[selectedPiece[0]][selectedPiece[1]] = 0;
 			
 			if(pieceColor==1){
-				$('.white-box[name='+newPiecePlace+']').append("<div class='black-piece'>");
+				$('.white-box[name=' + newPiecePlace + ']').append("<div class='black-piece'>");
 				board[newPiecePlace[0]][newPiecePlace[1]] = 1;
 				
 			}else if(pieceColor==-1){
-				$('.white-box[name='+newPiecePlace+']').append("<div class='white-piece'>");
+				$('.white-box[name=' + newPiecePlace + ']').append("<div class='white-piece'>");
 				board[newPiecePlace[0]][newPiecePlace[1]] = -1;
 			}
 
 			isSelected = false;
 
-			$('.white-box[name='+selectedPiece+']').css("background-color", "white");
-			$('.white-box[name='+rigthPiecePlace+']').css("background-color", "white");
-			$('.white-box[name='+leftPiecePlace+']').css("background-color", "white");
+			$('.white-box[name=' + selectedPiece + ']').css("background-color", "white");
+			$('.white-box[name=' + rigthPiecePlace + ']').css("background-color", "white");
+			$('.white-box[name=' + leftPiecePlace + ']').css("background-color", "white");
 			
 			selectedPiece = null;
 			rigthPiecePlace = null;
