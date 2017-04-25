@@ -90,14 +90,14 @@ function addPiecesOnBoard(){
 
 
 var board = [
-			 [-1, 0,-1, 0,-1, 0,-1, 0],
-		     [ 0,-1, 0,-1, 0,-1, 0,-1],
-			 [-1, 0,-1, 0,-1, 0,-1, 0],
-			 [ 0, 0, 0, 0, 0, 0, 0, 0],
-			 [ 0, 0, 0, 0, 0, 0, 0, 0],
-			 [ 0, 1, 0, 1, 0, 1, 0, 1],
-			 [ 1, 0, 1, 0, 1, 0, 1, 0],
-			 [ 0, 1, 0, 1, 0, 1, 0, 1]
+    			 [-1, 0,-1, 0,-1, 0,-1, 0],
+    		     [ 0,-1, 0,-1, 0,-1, 0,-1],
+    			 [-1, 0,-1, 0,-1, 0,-1, 0],
+    			 [ 0, 0, 0, 0, 0, 0, 0, 0],
+    			 [ 0, 0, 0, 0, 0, 0, 0, 0],
+    			 [ 0, 1, 0, 1, 0, 1, 0, 1],
+    			 [ 1, 0, 1, 0, 1, 0, 1, 0],
+    			 [ 0, 1, 0, 1, 0, 1, 0, 1]
 			];
 
 var isSelected = false;
@@ -112,14 +112,14 @@ function getPieceMovement(){
 	var coordY = parseInt($(this).attr('name')[1]);
 	
 	if(board[coordX][coordY] == 1){
-		getleftRightIndex(coordX, coordY, coordX-1, coordY-1, coordX-1, coordY+1);
-		selectedPiece = coordX + '' + coordY;
-		selectedPieceColor = 1;
+        selectedPieceColor = 1;
+		getleftRightIndex(coordX, coordY);
+		
 
 	}else if(board[coordX][coordY] == -1){
-		getleftRightIndex(coordX, coordY, coordX+1, coordY-1, coordX+1, coordY+1);
-		selectedPiece = coordX+''+coordY;
-		selectedPieceColor = -1;
+        selectedPieceColor = -1;
+		getleftRightIndex(coordX, coordY);
+		
 	}
 	
 	if(isSelected){
@@ -132,10 +132,13 @@ function getPieceMovement(){
 	isSelected = true;
 }
 
-function getleftRightIndex(crdX, crdY, leftCoordX, leftCoordY, rightCoordX, rightCoordY){
-	var topLeftBoxIndex = ((crdX > 0) && (crdY > 0)) ? (leftCoordX + '' + leftCoordY) : null;
-	var topRightBoxIndex = (crdX > 0) ? (rightCoordX + '' + rightCoordY) : null;
-
+function getleftRightIndex(crdX, crdY){
+    var topLeftBoxIndex = (selectedPieceColor == 1) ? ( ( (crdX > 0) && (crdY > 0) ) ? (crdX-1) + '' + (crdY-1) : null)
+                                                    : ( ( (crdX > 0) && (crdY > 0) ) ? (crdX+1) + '' + (crdY-1) : null);
+	
+	var topRightBoxIndex = (selectedPieceColor == 1) ? ( ( (crdX > 0) && (crdY > 0) ) ? (crdX-1) + '' + (crdY+1) : null)
+                                                     : ( ( (crdX > 0) && (crdY > 0) ) ? (crdX+1) + '' + (crdY+1) : null);
+	selectedPiece = crdX + '' + crdY;
 	coloredPiecePlaces(topLeftBoxIndex, topRightBoxIndex);
 }
 
