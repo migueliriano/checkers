@@ -115,14 +115,13 @@ function getPieceMovement(){
 
     if(handPlay == 1)
     	if(board[coordX][coordY] == 1){
-
-            selectedPieceColor = 1;
+            selectedPieceColor = handPlay;
     		getleftRightIndex(coordX, coordY);
     	}
 
     if(handPlay == -1)  
         if(board[coordX][coordY] == -1){
-            selectedPieceColor = -1;
+            selectedPieceColor = handPlay;
     		getleftRightIndex(coordX, coordY);
     	}
 	
@@ -145,7 +144,6 @@ function getleftRightIndex(crdX, crdY){
                                                      : ( ( (crdX+1 < 8) && (crdY+1 < 8) ) ? (crdX+1) + '' + (crdY+1) : null);
 
 	selectedPiece = crdX + '' + crdY;
-    console.log(topLeftBoxIndex, topRightBoxIndex);
 	
     coloredPiecePlaces(topLeftBoxIndex, topRightBoxIndex);
 }
@@ -164,7 +162,7 @@ function coloredPiecePlaces(left, right) {
 		}else if(leftX >=0 && leftY >=0 && board[leftX][leftY] != 0)
             coloredOnJumpPiece(leftX, leftY, 'L');
     }
-    
+
 
 	if(right != null){
         var rightX = parseInt(right[0]);
@@ -198,17 +196,15 @@ function coloredOnJumpPiece(x, y, side){
     else if(selectedPieceColor == -1 && side == 'L')
         place = (board[x+1][y-1] == 0 && board[x][y] == 1) ? (x+1).toString() + (y-1).toString() : null;
     
-    
 
     $('.white-box[name=' + place + ']').css("background-color", "yellow");
 
     rigthPiecePlace = (side == 'R') ? place : rigthPiecePlace;
     leftPiecePlace = (side == 'L') ? place : leftPiecePlace;
 
-    if(side == 'L')
-        pieceRemove = (x).toString()+(y).toString();
-    else
-        pieceRemove = (x).toString()+(y).toString();
+    
+    pieceRemove = (x).toString()+(y).toString();
+    return;
 
 
 }

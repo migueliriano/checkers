@@ -6,8 +6,8 @@
 
 .white-box{
 	margin: 0%;
-    width:60px;
-    height:60px;
+    width:50px;
+    height:50px;
     background-color:white;
  }
 
@@ -34,4 +34,9 @@
 	height:50px; 
 	background-color:black; 
 	border-radius: 50%;
+}
+
+td{
+	width:60px;
+    height:60px;
 }
