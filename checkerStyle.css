@@ -40,3 +40,12 @@
 	border-radius: 50%;
 	border-style: ridge;
 }
+
+.king-piece{
+	margin: 0 auto;
+	padding: 0%;
+	width:30px; 
+	height:30px; 
+	background-color:red; 
+	border-radius: 50%;
+}

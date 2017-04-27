@@ -293,12 +293,28 @@ function moveSelectedPiece(currentPiecePlace, newPiecePlace, pieceColor){
 
 
 			if(pieceColor==1){
-				$('.white-box[name=' + newPiecePlace + ']').append("<div class='black-piece'>");
-				board[newPiecePlace[0]][newPiecePlace[1]] = 1;
+				var pieceMove = $('.white-box[name=' + newPiecePlace + ']')
+                if(newPiecePlace[0] == '0'){
+                    $(pieceMove.append("<div class='black-piece'>").children()[0]).append("<div class='king-piece'>");
+                    board[newPiecePlace[0]][newPiecePlace[1]] = 2;
+
+                }else{
+                    pieceMove.append("<div class='black-piece'>");
+				    board[newPiecePlace[0]][newPiecePlace[1]] = 1;
+
+                }
 				
 			}else if(pieceColor==-1){
-				$('.white-box[name=' + newPiecePlace + ']').append("<div class='white-piece'>");
-				board[newPiecePlace[0]][newPiecePlace[1]] = -1;
+                var pieceMove = $('.white-box[name=' + newPiecePlace + ']');
+                if(newPiecePlace[0] == '7'){
+				    $(pieceMove.append("<div class='white-piece'>").children()[0]).append("<div class='king-piece'>");
+				    board[newPiecePlace[0]][newPiecePlace[1]] = -2;
+
+                }else{
+                    pieceMove.append("<div class='white-piece'>");
+                    board[newPiecePlace[0]][newPiecePlace[1]] = -1;
+
+                }
 			}
 
 
