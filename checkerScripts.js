@@ -130,10 +130,12 @@ function getPieceMovement(){
 	
     
 	if(isSelected){
-		if(rigthPiecePlace == (coordX + '' + coordY) )
+		if(rigthPiecePlace == (coordX + '' + coordY) ){
 			moveSelectedPiece(coordX + '' + coordY, rigthPiecePlace, selectedPieceColor);
-		if(leftPiecePlace == (coordX + '' + coordY) )
+        }
+		if(leftPiecePlace == (coordX + '' + coordY) ){
 			moveSelectedPiece(coordX + '' + coordY, leftPiecePlace, selectedPieceColor);
+        }
 	}
 
 	isSelected = true;
@@ -149,8 +151,9 @@ function getleftRightIndex(crdX, crdY){
 
 	selectedPiece = crdX + '' + crdY;
 
-    if(keepJumping != null)
+    if(keepJumping != null){
         return [topLeftBoxIndex, topRightBoxIndex];
+    }
 	
     coloredPiecePlaces(topLeftBoxIndex, topRightBoxIndex);
 }
@@ -178,8 +181,9 @@ function coloredPiecePlaces(left, right) {
             }else if(board[leftX][leftY] == 0 && right == null){
                 $('.white-box[name=' + left + ']').css("background-color", "yellow");
 
-            }else if(board[leftX][leftY] != selectedPieceColor && board[leftX][leftY] != 0)
+            }else if(board[leftX][leftY] != selectedPieceColor && board[leftX][leftY] != 0){
                 coloredOnJumpPiece(leftX, leftY, 'L');
+            }
         }
 
     }
@@ -207,8 +211,9 @@ function coloredPiecePlaces(left, right) {
             }else if(board[rightX][rightY] == 0 && left == null){
                 $('.white-box[name=' + right + ']').css("background-color", "yellow");
 
-            }else if(board[rightX][rightY] != selectedPieceColor && board[rightX][rightY] != 0)
+            }else if(board[rightX][rightY] != selectedPieceColor && board[rightX][rightY] != 0){
                 coloredOnJumpPiece(rightX, rightY, 'R');
+            }
         }
     }
 
@@ -220,31 +225,38 @@ function coloredOnJumpPiece(x, y, side){
     var place = null;
     
     if(selectedPieceColor == 1 && side == 'R'){
-        if(board[x-1][y+1] == 0)
+        if(board[x-1][y+1] == 0){
             place = (board[x][y] == -1) ? (x-1).toString() + (y+1).toString() : null;
-        else
+        }else{
             $('.white-box[name=' + leftPiecePlace + ']').css("background-color", "yellow");
+        }
 
         
     }else if(selectedPieceColor == 1 && side == 'L'){
-        if(board[x-1][y-1] == 0)
+        if(board[x-1][y-1] == 0){
             place = (board[x][y] == -1) ? (x-1).toString() + (y-1).toString() : null;
-        else
+        }
+        else{
             $('.white-box[name=' + rigthPiecePlace + ']').css("background-color", "yellow");
+        }
     
 
     }else if(selectedPieceColor == -1 && side == 'R'){
-        if(board[x+1][y+1] == 0)
+        if(board[x+1][y+1] == 0){
             place = (board[x][y] == 1) ? (x+1).toString() + (y+1).toString() : null;
-        else
+        }
+        else{
             $('.white-box[name=' + leftPiecePlace + ']').css("background-color", "yellow");
+        }
     
 
     }else if(selectedPieceColor == -1 && side == 'L'){
-        if(board[x+1][y-1] == 0)
+        if(board[x+1][y-1] == 0){
             place = (board[x][y] == 1) ? (x+1).toString() + (y-1).toString() : null;
-        else
+        }
+        else{
             $('.white-box[name=' + rigthPiecePlace + ']').css("background-color", "yellow");
+        }
 
     }
 
@@ -256,8 +268,9 @@ function coloredOnJumpPiece(x, y, side){
         $('.white-box[name=' + place + ']').css("background-color", "yellow");
         pieceRemove = (x).toString()+(y).toString();
         keepJumping = 1;
-    }else
+    }else{
         keepJumping = null;
+    }
 
     return;
         
@@ -317,11 +330,13 @@ function onKeepJumping(newPlace) {
 
         leftRightBox = getleftRightIndex(coordX, coordY);
 
-        if(leftRightBox[0] != null)
+        if(leftRightBox[0] != null){
             coloredOnJumpPiece(parseInt(leftRightBox[0][0]), parseInt(leftRightBox[0][1]), 'L');
+        }
 
-        if(leftRightBox[1] != null)
+        if(leftRightBox[1] != null){
             coloredOnJumpPiece(parseInt(leftRightBox[1][0]), parseInt(leftRightBox[1][1]), 'R');
+        }
     }
 
 }
