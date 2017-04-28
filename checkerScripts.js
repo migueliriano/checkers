@@ -109,15 +109,27 @@ var pieceRemove = null;
 var handPlay = 1;
 var keepJumping = null;
 var opponentJump = null;
+var oldSelectedPiece = null;
+
 function getPieceMovement(){
 	
 	var coordX = parseInt($(this).attr('name')[0]);
 	var coordY = parseInt($(this).attr('name')[1]);
 
+    if(isSelected){
+        if(rigthPiecePlace == (coordX + '' + coordY) ){
+            moveSelectedPiece(coordX + '' + coordY, rigthPiecePlace, selectedPieceColor);
+        }
+        if(leftPiecePlace == (coordX + '' + coordY) ){
+            moveSelectedPiece(coordX + '' + coordY, leftPiecePlace, selectedPieceColor);
+        }
+    }
+
     if(handPlay == 1){
     	if(board[coordX][coordY] == 1){
             selectedPieceColor = handPlay;
     		getleftRightIndex(coordX, coordY);
+            isSelected = true;
     	}
     }
 
@@ -125,41 +137,36 @@ function getPieceMovement(){
         if(board[coordX][coordY] == -1){
             selectedPieceColor = handPlay;
     		getleftRightIndex(coordX, coordY);
+            isSelected = true;
     	}
     }
 	
     
-	if(isSelected){
-		if(rigthPiecePlace == (coordX + '' + coordY) ){
-			moveSelectedPiece(coordX + '' + coordY, rigthPiecePlace, selectedPieceColor);
-        }
-		if(leftPiecePlace == (coordX + '' + coordY) ){
-			moveSelectedPiece(coordX + '' + coordY, leftPiecePlace, selectedPieceColor);
-        }
-	}
+	
 
-	isSelected = true;
 }
 
 
 function getleftRightIndex(crdX, crdY){
-    var topLeftBoxIndex = (selectedPieceColor == 1) ? ( ( (crdX > 0) && (crdY > 0) ) ? (crdX-1) + '' + (crdY-1) : null)
+    var leftBoxIndex = (selectedPieceColor == 1) ? ( ( (crdX > 0) && (crdY > 0) ) ? (crdX-1) + '' + (crdY-1) : null)
                                                     : ( ( (crdY > 0) ) ? (crdX+1) + '' + (crdY-1) : null);
 	
-	var topRightBoxIndex = (selectedPieceColor == 1) ? ( ( (crdX > 0) && (crdY+1 < 8) ) ? (crdX-1) + '' + (crdY+1) : null)
+	var rightBoxIndex = (selectedPieceColor == 1) ? ( ( (crdX > 0) && (crdY+1 < 8) ) ? (crdX-1) + '' + (crdY+1) : null)
                                                      : ( ( (crdX+1 < 8) && (crdY+1 < 8) ) ? (crdX+1) + '' + (crdY+1) : null);
 
 	selectedPiece = crdX + '' + crdY;
 
     if(keepJumping != null){
-        return [topLeftBoxIndex, topRightBoxIndex];
+        return [leftBoxIndex, rightBoxIndex];
     }
 	
-    coloredPiecePlaces(topLeftBoxIndex, topRightBoxIndex);
+    coloredPiecePlaces(leftBoxIndex, rightBoxIndex);
 }
 
 
 function coloredPiecePlaces(left, right) {
+
+    clearBoxColored();
 
 	if(left != null){
         var leftX = parseInt(left[0]);
@@ -168,7 +175,7 @@ function coloredPiecePlaces(left, right) {
 
         //Color both side
 		if( (leftX >= 0 && leftY >= 0) && board[leftX][leftY] == 0 && right != null && board[right[0]][right[1]] == 0){
-    		$(this).css("background-color", "yellow");
+    		//$('.white-box[name=' + selectedPiece + ']').css("background-color", "yellow");
     		$('.white-box[name=' + left + ']').css("background-color", "yellow");
 
 		}else if(leftX >=0 && leftY >=0){
@@ -185,14 +192,13 @@ function coloredPiecePlaces(left, right) {
 
         //Color both side
 		if( (rightX < 8 && rightY < 8) && board[rightX][rightY] == 0 && left != null && board[left[0]][left[1]] == 0){
-			$(this).css("background-color", "yellow");
+			//$('.white-box[name=' + selectedPiece + ']').css("background-color", "yellow");
 			$('.white-box[name=' + right + ']').css("background-color", "yellow");
 
         }else if(rightX < 8 && rightY < 8){ 
             coloredLeft_or_right_piece(left, right, 'R');
         }
     }
-
 
 }
 
@@ -241,39 +247,48 @@ function coloredLeft_or_right_piece(leftPiece, rightPiece, pieceSide) {
 
 function coloredOnJumpPiece(x, y, side){
     var place = null;
-
+    console.log(x, y);
     if(selectedPieceColor == 1 && side == 'R'){
-        if(board[x-1][y+1] == 0){
-            place = (board[x][y] == -1) ? (x-1).toString() + (y+1).toString() : null;
-        }else{
-            $('.white-box[name=' + leftPiecePlace + ']').css("background-color", "yellow");
+        if(x-1 >= 0 && y+1 < 8){
+            if(board[x-1][y+1] == 0){
+                place = (board[x][y] == -1) ? (x-1).toString() + (y+1).toString() : null;
+            }
+            else{
+                $('.white-box[name=' + leftPiecePlace + ']').css("background-color", "yellow");
+            }
         }
 
         
     }else if(selectedPieceColor == 1 && side == 'L'){
-        if(board[x-1][y-1] == 0){
-            place = (board[x][y] == -1) ? (x-1).toString() + (y-1).toString() : null;
-        }
-        else{
-            $('.white-box[name=' + rigthPiecePlace + ']').css("background-color", "yellow");
+        if(x-1 >= 0 && y-1 >= 0){
+            if(board[x-1][y-1] == 0){
+                place = (board[x][y] == -1) ? (x-1).toString() + (y-1).toString() : null;
+            }
+            else{
+                $('.white-box[name=' + rigthPiecePlace + ']').css("background-color", "yellow");
+            }
         }
     
 
     }else if(selectedPieceColor == -1 && side == 'R'){
-        if(board[x+1][y+1] == 0){
-            place = (board[x][y] == 1) ? (x+1).toString() + (y+1).toString() : null;
-        }
-        else{
-            $('.white-box[name=' + leftPiecePlace + ']').css("background-color", "yellow");
+        if(x+1 < 8 && y+1 < 8){
+            if(board[x+1][y+1] == 0){
+                place = (board[x][y] == 1) ? (x+1).toString() + (y+1).toString() : null;
+            }
+            else{
+                $('.white-box[name=' + leftPiecePlace + ']').css("background-color", "yellow");
+            }
         }
     
 
     }else if(selectedPieceColor == -1 && side == 'L'){
-        if(board[x+1][y-1] == 0){
-            place = (board[x][y] == 1) ? (x+1).toString() + (y-1).toString() : null;
-        }
-        else{
-            $('.white-box[name=' + rigthPiecePlace + ']').css("background-color", "yellow");
+        if(x+1 < 8 && y-1 >= 0){
+            if(board[x+1][y-1] == 0){
+                place = (board[x][y] == 1) ? (x+1).toString() + (y-1).toString() : null;
+            }
+            else{
+                $('.white-box[name=' + rigthPiecePlace + ']').css("background-color", "yellow");
+            }
         }
 
     }
@@ -318,8 +333,8 @@ function moveSelectedPiece(placeTomove, newPiecePlace, pieceColor){
 			if(pieceColor==1){
 				var pieceMove = $('.white-box[name=' + newPiecePlace + ']')
                 if(newPiecePlace[0] == '0'){
-                    $(pieceMove.append("<div class='black-piece'>").children()[0]).append("<div class='king-piece'>");
-                    board[newPiecePlace[0]][newPiecePlace[1]] = 2;
+                    // $(pieceMove.append("<div class='black-piece'>").children()[0]).append("<div class='king-piece'>");
+                    // board[newPiecePlace[0]][newPiecePlace[1]] = 2;
 
                 }else{
                     pieceMove.append("<div class='black-piece'>");
@@ -330,8 +345,8 @@ function moveSelectedPiece(placeTomove, newPiecePlace, pieceColor){
 			}else if(pieceColor==-1){
                 var pieceMove = $('.white-box[name=' + newPiecePlace + ']');
                 if(newPiecePlace[0] == '7'){
-				    $(pieceMove.append("<div class='white-piece'>").children()[0]).append("<div class='king-piece'>");
-				    board[newPiecePlace[0]][newPiecePlace[1]] = -2;
+				    // $(pieceMove.append("<div class='white-piece'>").children()[0]).append("<div class='king-piece'>");
+				    // board[newPiecePlace[0]][newPiecePlace[1]] = -2;
 
                 }else{
                     pieceMove.append("<div class='white-piece'>");
@@ -343,9 +358,8 @@ function moveSelectedPiece(placeTomove, newPiecePlace, pieceColor){
 
 			isSelected = false;
 
-			$('.white-box[name=' + selectedPiece + ']').css("background-color", "white");
-			$('.white-box[name=' + rigthPiecePlace + ']').css("background-color", "white");
-			$('.white-box[name=' + leftPiecePlace + ']').css("background-color", "white");
+			clearBoxColored();
+
 			
 			selectedPiece = null;
 			rigthPiecePlace = null;
@@ -360,6 +374,12 @@ function moveSelectedPiece(placeTomove, newPiecePlace, pieceColor){
 		
 	}
 
+}
+
+function clearBoxColored() {
+    $('.white-box[name=' + selectedPiece + ']').css("background-color", "white");
+    $('.white-box[name=' + rigthPiecePlace + ']').css("background-color", "white");
+    $('.white-box[name=' + leftPiecePlace + ']').css("background-color", "white");
 }
 
 
