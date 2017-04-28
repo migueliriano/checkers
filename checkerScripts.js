@@ -149,10 +149,10 @@ function getPieceMovement(){
 
 function getleftRightIndex(crdX, crdY){
     var leftBoxIndex = (selectedPieceColor == 1) ? ( ( (crdX > 0) && (crdY > 0) ) ? (crdX-1) + '' + (crdY-1) : null)
-                                                    : ( ( (crdY > 0) ) ? (crdX+1) + '' + (crdY-1) : null);
+                                                 : ( ( (crdY > 0) ) ? (crdX+1) + '' + (crdY-1) : null);
 	
 	var rightBoxIndex = (selectedPieceColor == 1) ? ( ( (crdX > 0) && (crdY+1 < 8) ) ? (crdX-1) + '' + (crdY+1) : null)
-                                                     : ( ( (crdX+1 < 8) && (crdY+1 < 8) ) ? (crdX+1) + '' + (crdY+1) : null);
+                                                  : ( ( (crdX+1 < 8) && (crdY+1 < 8) ) ? (crdX+1) + '' + (crdY+1) : null);
 
 	selectedPiece = crdX + '' + crdY;
 
@@ -173,13 +173,12 @@ function coloredPiecePlaces(left, right) {
         var leftY = parseInt(left[1]);
         leftPiecePlace = left;
 
-        //Color both side
+
 		if( (leftX >= 0 && leftY >= 0) && board[leftX][leftY] == 0 && right != null && board[right[0]][right[1]] == 0){
-    		//$('.white-box[name=' + selectedPiece + ']').css("background-color", "yellow");
     		$('.white-box[name=' + left + ']').css("background-color", "yellow");
 
 		}else if(leftX >=0 && leftY >=0){
-            coloredLeft_or_right_piece(left, right, 'L');
+            coloredLeftOrRightPiece(left, right, 'L');
         }
 
     }
@@ -190,19 +189,19 @@ function coloredPiecePlaces(left, right) {
         var rightY = parseInt(right[1]);
         rigthPiecePlace = right;
 
-        //Color both side
+        
 		if( (rightX < 8 && rightY < 8) && board[rightX][rightY] == 0 && left != null && board[left[0]][left[1]] == 0){
-			//$('.white-box[name=' + selectedPiece + ']').css("background-color", "yellow");
 			$('.white-box[name=' + right + ']').css("background-color", "yellow");
 
         }else if(rightX < 8 && rightY < 8){ 
-            coloredLeft_or_right_piece(left, right, 'R');
+            coloredLeftOrRightPiece(left, right, 'R');
         }
     }
 
 }
 
-function coloredLeft_or_right_piece(leftPiece, rightPiece, pieceSide) {
+
+function coloredLeftOrRightPiece(leftPiece, rightPiece, pieceSide) {
     
     if(pieceSide == 'L'){
         var leftX = parseInt(leftPiece[0]);
@@ -247,7 +246,7 @@ function coloredLeft_or_right_piece(leftPiece, rightPiece, pieceSide) {
 
 function coloredOnJumpPiece(x, y, side){
     var place = null;
-    console.log(x, y);
+    
     if(selectedPieceColor == 1 && side == 'R'){
         if(x-1 >= 0 && y+1 < 8){
             if(board[x-1][y+1] == 0){
@@ -290,12 +289,10 @@ function coloredOnJumpPiece(x, y, side){
                 $('.white-box[name=' + rigthPiecePlace + ']').css("background-color", "yellow");
             }
         }
-
     }
 
     rigthPiecePlace = (side == 'R') ? place : rigthPiecePlace;
     leftPiecePlace = (side == 'L') ? place : leftPiecePlace;
-
 
     if(place != null){
         $('.white-box[name=' + place + ']').css("background-color", "yellow");
@@ -333,24 +330,28 @@ function moveSelectedPiece(placeTomove, newPiecePlace, pieceColor){
 			if(pieceColor==1){
 				var pieceMove = $('.white-box[name=' + newPiecePlace + ']')
                 if(newPiecePlace[0] == '0'){
-                    // $(pieceMove.append("<div class='black-piece'>").children()[0]).append("<div class='king-piece'>");
-                    // board[newPiecePlace[0]][newPiecePlace[1]] = 2;
+                    $(pieceMove.append("<div class='black-piece'>").children()[0]).append("<div class='king-piece'>");
+                    board[newPiecePlace[0]][newPiecePlace[1]] = 2;
 
                 }else{
-                    pieceMove.append("<div class='black-piece'>");
-				    board[newPiecePlace[0]][newPiecePlace[1]] = 1;
+                    if(pieceMove.children().length == 0){
+                        pieceMove.append("<div class='black-piece'>");
+				        board[newPiecePlace[0]][newPiecePlace[1]] = 1;
+                    }
 
                 }
 				
 			}else if(pieceColor==-1){
                 var pieceMove = $('.white-box[name=' + newPiecePlace + ']');
                 if(newPiecePlace[0] == '7'){
-				    // $(pieceMove.append("<div class='white-piece'>").children()[0]).append("<div class='king-piece'>");
-				    // board[newPiecePlace[0]][newPiecePlace[1]] = -2;
+				    $(pieceMove.append("<div class='white-piece'>").children()[0]).append("<div class='king-piece'>");
+				    board[newPiecePlace[0]][newPiecePlace[1]] = -2;
 
                 }else{
-                    pieceMove.append("<div class='white-piece'>");
-                    board[newPiecePlace[0]][newPiecePlace[1]] = -1;
+                    if(pieceMove.children().length == 0){
+                        pieceMove.append("<div class='white-piece'>");
+                        board[newPiecePlace[0]][newPiecePlace[1]] = -1;
+                    }
 
                 }
 			}
@@ -359,7 +360,6 @@ function moveSelectedPiece(placeTomove, newPiecePlace, pieceColor){
 			isSelected = false;
 
 			clearBoxColored();
-
 			
 			selectedPiece = null;
 			rigthPiecePlace = null;
@@ -369,7 +369,7 @@ function moveSelectedPiece(placeTomove, newPiecePlace, pieceColor){
 
             handPlay = (handPlay == 1) ? -1 : 1;
 
-            //makeOpponentJump(newPiecePlace);
+            makeOpponentJump(newPiecePlace);
 		}
 		
 	}
