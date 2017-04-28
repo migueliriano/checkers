@@ -108,7 +108,7 @@ var selectedPieceColor = null;
 var pieceRemove = null;
 var handPlay = 1;
 var keepJumping = null;
-
+var opponentJump = null;
 function getPieceMovement(){
 	
 	var coordX = parseInt($(this).attr('name')[0]);
@@ -166,24 +166,13 @@ function coloredPiecePlaces(left, right) {
         var leftY = parseInt(left[1]);
         leftPiecePlace = left;
 
+        //Color both side
 		if( (leftX >= 0 && leftY >= 0) && board[leftX][leftY] == 0 && right != null && board[right[0]][right[1]] == 0){
     		$(this).css("background-color", "yellow");
     		$('.white-box[name=' + left + ']').css("background-color", "yellow");
 
 		}else if(leftX >=0 && leftY >=0){
-            
-            if(board[leftX][leftY] == selectedPieceColor){
-                if(right != null && board[right[0]][right[1]] == 0){
-                    $('.white-box[name=' + right + ']').css("background-color", "yellow");
-                    leftPiecePlace = right;
-                }
-            
-            }else if(board[leftX][leftY] == 0 && right == null){
-                $('.white-box[name=' + left + ']').css("background-color", "yellow");
-
-            }else if(board[leftX][leftY] != selectedPieceColor && board[leftX][leftY] != 0){
-                coloredOnJumpPiece(leftX, leftY, 'L');
-            }
+            coloredLeft_or_right_piece(left, right, 'L');
         }
 
     }
@@ -194,36 +183,65 @@ function coloredPiecePlaces(left, right) {
         var rightY = parseInt(right[1]);
         rigthPiecePlace = right;
 
-        
-
+        //Color both side
 		if( (rightX < 8 && rightY < 8) && board[rightX][rightY] == 0 && left != null && board[left[0]][left[1]] == 0){
 			$(this).css("background-color", "yellow");
 			$('.white-box[name=' + right + ']').css("background-color", "yellow");
 
         }else if(rightX < 8 && rightY < 8){ 
-            
-            if(board[rightX][rightY] == selectedPieceColor){
-                if(left != null && board[left[0]][left[1]] == 0){
-                    $('.white-box[name=' + left + ']').css("background-color", "yellow");
-                    rigthPiecePlace = left;  
-                }
-
-            }else if(board[rightX][rightY] == 0 && left == null){
-                $('.white-box[name=' + right + ']').css("background-color", "yellow");
-
-            }else if(board[rightX][rightY] != selectedPieceColor && board[rightX][rightY] != 0){
-                coloredOnJumpPiece(rightX, rightY, 'R');
-            }
+            coloredLeft_or_right_piece(left, right, 'R');
         }
     }
 
 
 }
 
+function coloredLeft_or_right_piece(leftPiece, rightPiece, pieceSide) {
+    
+    if(pieceSide == 'L'){
+        var leftX = parseInt(leftPiece[0]);
+        var leftY = parseInt(leftPiece[1]);
+
+        if(board[leftX][leftY] == selectedPieceColor){
+            if(rightPiece != null && board[rightPiece[0]][rightPiece[1]] == 0){
+                $('.white-box[name=' + rightPiece + ']').css("background-color", "yellow");
+                leftPiecePlace = rightPiece;
+            }
+                
+        }else if(board[leftX][leftY] == 0 && rightPiece == null){
+            $('.white-box[name=' + leftPiece + ']').css("background-color", "yellow");
+
+        }else if(board[leftX][leftY] != selectedPieceColor && board[leftX][leftY] != 0){
+            coloredOnJumpPiece(leftX, leftY, 'L');
+        }
+
+    
+    }else{
+        var rightX = parseInt(rightPiece[0]);
+        var rightY = parseInt(rightPiece[1]);
+
+        if(board[rightX][rightY] == selectedPieceColor){
+            if(leftPiece != null && board[leftPiece[0]][leftPiece[1]] == 0){
+                $('.white-box[name=' + leftPiece + ']').css("background-color", "yellow");
+                rigthPiecePlace = leftPiece;  
+            }
+
+        }else if(board[rightX][rightY] == 0 && leftPiece == null){
+            $('.white-box[name=' + rightPiece + ']').css("background-color", "yellow");
+
+        }else if(board[rightX][rightY] != selectedPieceColor && board[rightX][rightY] != 0){
+            coloredOnJumpPiece(rightX, rightY, 'R');
+        }
+
+    }
+
+        
+}
+
 
 function coloredOnJumpPiece(x, y, side){
     var place = null;
-    
+
     if(selectedPieceColor == 1 && side == 'R'){
         if(board[x-1][y+1] == 0){
             place = (board[x][y] == -1) ? (x-1).toString() + (y+1).toString() : null;
@@ -277,15 +295,20 @@ function coloredOnJumpPiece(x, y, side){
 }
 
 
-function moveSelectedPiece(currentPiecePlace, newPiecePlace, pieceColor){
+function moveSelectedPiece(placeTomove, newPiecePlace, pieceColor){
 	if(selectedPiece != null){
 
-		if(newPiecePlace == currentPiecePlace ){
+		if(newPiecePlace == placeTomove){
 
             if(pieceRemove != null){
                 $('.white-box[name=' + pieceRemove + ']').children().remove();
                 board[pieceRemove[0]][pieceRemove[1]] = 0;
                 pieceRemove = null;
+            }
+
+            if(opponentJump != null){
+                selectedPiece = opponentJump;
+                opponentJump = null;
             }
 
             $('.white-box[name=' + selectedPiece + ']').children().remove();
@@ -331,6 +354,8 @@ function moveSelectedPiece(currentPiecePlace, newPiecePlace, pieceColor){
             onKeepJumping(newPiecePlace)
 
             handPlay = (handPlay == 1) ? -1 : 1;
+
+            //makeOpponentJump(newPiecePlace);
 		}
 		
 	}
@@ -354,5 +379,64 @@ function onKeepJumping(newPlace) {
             coloredOnJumpPiece(parseInt(leftRightBox[1][0]), parseInt(leftRightBox[1][1]), 'R');
         }
     }
+
+}
+
+
+function makeOpponentJump(placeMoved){
+    var leftRightBox = [];
+    var coordX = parseInt(placeMoved[0]);
+    var coordY = parseInt(placeMoved[1]);
+
+    if(selectedPieceColor == -1){
+        keepJumping = 1;
+        leftRightBox = getleftRightIndex(coordX, coordY);
+        keepJumping = null;
+
+        if(leftRightBox[0] != null){
+            if(board[leftRightBox[0][0]][leftRightBox[0][1]] == 1){
+                selectedPieceColor = 1;
+                opponentJump = leftRightBox[0][0] + '' + leftRightBox[0][1]; 
+                coloredOnJumpPiece(parseInt(selectedPiece[0]), parseInt(selectedPiece[1]), 'R');
+            }
+        }
+
+        if(leftRightBox[1] != null){
+            if(board[leftRightBox[1][0]][leftRightBox[1][1]] == 1){
+                selectedPieceColor = 1;
+                opponentJump = leftRightBox[1][0] + '' + leftRightBox[1][1]; 
+                coloredOnJumpPiece(parseInt(selectedPiece[0]), parseInt(selectedPiece[1]), 'L');
+            }
+        }
+
+
+
+    }else if(selectedPieceColor == 1){
+        keepJumping = 1;
+        leftRightBox = getleftRightIndex(coordX, coordY);
+        keepJumping = null;
+
+
+
+        if(leftRightBox[0] != null){
+            if(board[leftRightBox[0][0]][leftRightBox[0][1]] == -1 && board[leftRightBox[1][0]][leftRightBox[1][1]] == 0){
+                selectedPieceColor = -1;
+                opponentJump = leftRightBox[0][0] + '' + leftRightBox[0][1]; 
+                coloredOnJumpPiece(parseInt(selectedPiece[0]), parseInt(selectedPiece[1]), 'R');
+            }
+
+        }
+
+        else if(leftRightBox[1] != null)
+            if(board[leftRightBox[1][0]][leftRightBox[1][1]] == -1 && board[leftRightBox[0][0]][leftRightBox[0][1]] == 0){
+                selectedPieceColor = -1;
+                opponentJump = leftRightBox[1][0] + '' + leftRightBox[1][1]; 
+                coloredOnJumpPiece(parseInt(selectedPiece[0]), parseInt(selectedPiece[1]), 'L');
+            
+        }
+
+    }
+
+
 
 }
