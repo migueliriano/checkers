@@ -116,6 +116,24 @@ function getPieceMovement(){
 	var coordX = parseInt($(this).attr('name')[0]);
 	var coordY = parseInt($(this).attr('name')[1]);
 
+    
+
+    if(handPlay == 1){
+    	if(board[coordX][coordY] == 1){
+            selectedPieceColor = handPlay;
+    		getleftRightIndex(coordX, coordY);
+    	}
+    }
+
+    if(handPlay == -1){  
+        if(board[coordX][coordY] == -1){
+            selectedPieceColor = handPlay;
+    		getleftRightIndex(coordX, coordY);
+           
+    	}
+    }
+
+
     if(isSelected){
         if(rigthPiecePlace == (coordX + '' + coordY) ){
             moveSelectedPiece(coordX + '' + coordY, rigthPiecePlace, selectedPieceColor);
@@ -124,24 +142,8 @@ function getPieceMovement(){
             moveSelectedPiece(coordX + '' + coordY, leftPiecePlace, selectedPieceColor);
         }
     }
-
-    if(handPlay == 1){
-    	if(board[coordX][coordY] == 1){
-            selectedPieceColor = handPlay;
-    		getleftRightIndex(coordX, coordY);
-            isSelected = true;
-    	}
-    }
-
-    if(handPlay == -1){  
-        if(board[coordX][coordY] == -1){
-            selectedPieceColor = handPlay;
-    		getleftRightIndex(coordX, coordY);
-            isSelected = true;
-    	}
-    }
 	
-    
+     isSelected = true;
 	
 
 }
@@ -409,54 +411,47 @@ function makeOpponentJump(placeMoved){
     var coordY = parseInt(placeMoved[1]);
 
     if(selectedPieceColor == -1){
-        keepJumping = 1;
-        leftRightBox = getleftRightIndex(coordX, coordY);
-        keepJumping = null;
+        checkOpponentMove(coordX, coordY, 1);
 
+    }else if(selectedPieceColor == 1){
+        checkOpponentMove(coordX, coordY, -1);
+    }
+
+}
+
+
+function checkOpponentMove(cX, cY , opponent) {
+    keepJumping = 1;
+    leftRightBox = getleftRightIndex(cX, cY);
+    keepJumping = null;
+
+    var bothSideToMove = null;
+
+    if(leftRightBox[0] != null && leftRightBox[1] != null){
+        if(board[leftRightBox[0][0]][leftRightBox[0][1]] == opponent){
+            if(board[leftRightBox[1][0]][leftRightBox[1][1]] == opponent)
+                bothSideToMove = 1;
+        }
+    }
+
+    if(bothSideToMove == null){
         if(leftRightBox[0] != null){
-            if(board[leftRightBox[0][0]][leftRightBox[0][1]] == 1){
-                selectedPieceColor = 1;
+            if(board[leftRightBox[0][0]][leftRightBox[0][1]] == opponent){
+                selectedPieceColor = opponent;
                 opponentJump = leftRightBox[0][0] + '' + leftRightBox[0][1]; 
                 coloredOnJumpPiece(parseInt(selectedPiece[0]), parseInt(selectedPiece[1]), 'R');
             }
         }
 
         if(leftRightBox[1] != null){
-            if(board[leftRightBox[1][0]][leftRightBox[1][1]] == 1){
-                selectedPieceColor = 1;
+            if(board[leftRightBox[1][0]][leftRightBox[1][1]] == opponent){
+                selectedPieceColor = opponent;
                 opponentJump = leftRightBox[1][0] + '' + leftRightBox[1][1]; 
                 coloredOnJumpPiece(parseInt(selectedPiece[0]), parseInt(selectedPiece[1]), 'L');
             }
-        }
-
-
-
-    }else if(selectedPieceColor == 1){
-        keepJumping = 1;
-        leftRightBox = getleftRightIndex(coordX, coordY);
-        keepJumping = null;
-
-
-
-        if(leftRightBox[0] != null){
-            if(board[leftRightBox[0][0]][leftRightBox[0][1]] == -1 && board[leftRightBox[1][0]][leftRightBox[1][1]] == 0){
-                selectedPieceColor = -1;
-                opponentJump = leftRightBox[0][0] + '' + leftRightBox[0][1]; 
-                coloredOnJumpPiece(parseInt(selectedPiece[0]), parseInt(selectedPiece[1]), 'R');
-            }
-
-        }
-
-        else if(leftRightBox[1] != null)
-            if(board[leftRightBox[1][0]][leftRightBox[1][1]] == -1 && board[leftRightBox[0][0]][leftRightBox[0][1]] == 0){
-                selectedPieceColor = -1;
-                opponentJump = leftRightBox[1][0] + '' + leftRightBox[1][1]; 
-                coloredOnJumpPiece(parseInt(selectedPiece[0]), parseInt(selectedPiece[1]), 'L');
-            
         }
 
     }
 
-
-
+    
 }
