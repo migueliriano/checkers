@@ -1,12 +1,13 @@
 #board{
 	border-style: solid;
 	border-color: black;
-	width: 400px;
-	height: 400px;
+	width: 450px;
+	height: 450px;
 }
 
 .white-box{
 	margin: 0%;
+	padding: 0%;
     width:50px;
     height:50px;
     background-color:white;
@@ -15,6 +16,7 @@
 
 .black-box{
 	margin: 0%;
+	padding: 0%;
     width:50px;
     height:50px;
     background-color:black;
