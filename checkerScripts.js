@@ -42,7 +42,7 @@ function createCheckersBoard(){
 				}
 
 				bloc.setAttribute('name', i+''+j);
-				bloc.onclick = getPieceMovement;
+				bloc.onclick = setPieceMovement;
 		}
 
 		rowChangeColor = (rowChangeColor == 0) ? 1:0;
@@ -109,12 +109,32 @@ var pieceRemove = null;
 var handPlay = 1;
 var keepJumping = null;
 var opponentJump = null;
-var oldSelectedPiece = null;
+var currentSelectedPiece = null;
+var opponentMove = null;
+var twoOpponentJump = null;
 
-function getPieceMovement(){
-	
+
+function setPieceMovement(){
+
 	var coordX = parseInt($(this).attr('name')[0]);
 	var coordY = parseInt($(this).attr('name')[1]);
+
+    currentSelectedPiece = coordX + '' + coordY;
+
+    if(handPlay > 0){
+    	if(board[coordX][coordY] == 1){
+            selectedPieceColor = handPlay;
+    		getleftRightIndex(coordX, coordY);
+    	}
+    }
+
+    if(handPlay < 0){  
+        if(board[coordX][coordY] == -1){
+            selectedPieceColor = handPlay;
+    		getleftRightIndex(coordX, coordY);  
+    	}
+    }
+
 
     if(isSelected){
         if(rigthPiecePlace == (coordX + '' + coordY) ){
@@ -124,25 +144,8 @@ function getPieceMovement(){
             moveSelectedPiece(coordX + '' + coordY, leftPiecePlace, selectedPieceColor);
         }
     }
-
-    if(handPlay == 1){
-    	if(board[coordX][coordY] == 1){
-            selectedPieceColor = handPlay;
-    		getleftRightIndex(coordX, coordY);
-            isSelected = true;
-    	}
-    }
-
-    if(handPlay == -1){  
-        if(board[coordX][coordY] == -1){
-            selectedPieceColor = handPlay;
-    		getleftRightIndex(coordX, coordY);
-            isSelected = true;
-    	}
-    }
 	
-    
-	
+     isSelected = true;
 
 }
 
@@ -157,8 +160,11 @@ function getleftRightIndex(crdX, crdY){
 	selectedPiece = crdX + '' + crdY;
 
     if(keepJumping != null){
-        return [leftBoxIndex, rightBoxIndex];
+        if(opponentMove == null)
+            return [leftBoxIndex, rightBoxIndex];
     }
+   
+    
 	
     coloredPiecePlaces(leftBoxIndex, rightBoxIndex);
 }
@@ -168,6 +174,8 @@ function coloredPiecePlaces(left, right) {
 
     clearBoxColored();
 
+
+
 	if(left != null){
         var leftX = parseInt(left[0]);
         var leftY = parseInt(left[1]);
@@ -175,7 +183,8 @@ function coloredPiecePlaces(left, right) {
 
 
 		if( (leftX >= 0 && leftY >= 0) && board[leftX][leftY] == 0 && right != null && board[right[0]][right[1]] == 0){
-    		$('.white-box[name=' + left + ']').css("background-color", "yellow");
+            if(opponentMove == null)
+                $('.white-box[name=' + left + ']').css("background-color", "yellow");
 
 		}else if(leftX >=0 && leftY >=0){
             coloredLeftOrRightPiece(left, right, 'L');
@@ -191,7 +200,8 @@ function coloredPiecePlaces(left, right) {
 
         
 		if( (rightX < 8 && rightY < 8) && board[rightX][rightY] == 0 && left != null && board[left[0]][left[1]] == 0){
-			$('.white-box[name=' + right + ']').css("background-color", "yellow");
+            if(opponentMove == null)
+                $('.white-box[name=' + right + ']').css("background-color", "yellow");
 
         }else if(rightX < 8 && rightY < 8){ 
             coloredLeftOrRightPiece(left, right, 'R');
@@ -208,12 +218,12 @@ function coloredLeftOrRightPiece(leftPiece, rightPiece, pieceSide) {
         var leftY = parseInt(leftPiece[1]);
 
         if(board[leftX][leftY] == selectedPieceColor){
-            if(rightPiece != null && board[rightPiece[0]][rightPiece[1]] == 0){
+            if(rightPiece != null && board[rightPiece[0]][rightPiece[1]] == 0 && opponentMove == null){
                 $('.white-box[name=' + rightPiece + ']').css("background-color", "yellow");
                 leftPiecePlace = rightPiece;
             }
                 
-        }else if(board[leftX][leftY] == 0 && rightPiece == null){
+        }else if(board[leftX][leftY] == 0 && rightPiece == null && opponentMove == null){
             $('.white-box[name=' + leftPiece + ']').css("background-color", "yellow");
 
         }else if(board[leftX][leftY] != selectedPieceColor && board[leftX][leftY] != 0){
@@ -226,27 +236,27 @@ function coloredLeftOrRightPiece(leftPiece, rightPiece, pieceSide) {
         var rightY = parseInt(rightPiece[1]);
 
         if(board[rightX][rightY] == selectedPieceColor){
-            if(leftPiece != null && board[leftPiece[0]][leftPiece[1]] == 0){
+            if(leftPiece != null && board[leftPiece[0]][leftPiece[1]] == 0 && opponentMove == null){
                 $('.white-box[name=' + leftPiece + ']').css("background-color", "yellow");
                 rigthPiecePlace = leftPiece;  
             }
 
-        }else if(board[rightX][rightY] == 0 && leftPiece == null){
+        }else if(board[rightX][rightY] == 0 && leftPiece == null && opponentMove == null){
             $('.white-box[name=' + rightPiece + ']').css("background-color", "yellow");
 
         }else if(board[rightX][rightY] != selectedPieceColor && board[rightX][rightY] != 0){
             coloredOnJumpPiece(rightX, rightY, 'R');
         }
-
     }
 
-        
 }
 
 
 function coloredOnJumpPiece(x, y, side){
     var place = null;
-    
+
+   
+
     if(selectedPieceColor == 1 && side == 'R'){
         if(x-1 >= 0 && y+1 < 8){
             if(board[x-1][y+1] == 0){
@@ -303,6 +313,7 @@ function coloredOnJumpPiece(x, y, side){
     }
 
     return;
+
         
 }
 
@@ -312,50 +323,21 @@ function moveSelectedPiece(placeTomove, newPiecePlace, pieceColor){
 
 		if(newPiecePlace == placeTomove){
 
+            if(opponentJump != null){
+                selectedPiece = opponentJump;
+                opponentJump = null;
+            }
+
             if(pieceRemove != null){
                 $('.white-box[name=' + pieceRemove + ']').children().remove();
                 board[pieceRemove[0]][pieceRemove[1]] = 0;
                 pieceRemove = null;
             }
 
-            if(opponentJump != null){
-                selectedPiece = opponentJump;
-                opponentJump = null;
-            }
-
             $('.white-box[name=' + selectedPiece + ']').children().remove();
             board[selectedPiece[0]][selectedPiece[1]] = 0;
 
-
-			if(pieceColor==1){
-				var pieceMove = $('.white-box[name=' + newPiecePlace + ']')
-                if(newPiecePlace[0] == '0'){
-                    $(pieceMove.append("<div class='black-piece'>").children()[0]).append("<div class='king-piece'>");
-                    board[newPiecePlace[0]][newPiecePlace[1]] = 2;
-
-                }else{
-                    if(pieceMove.children().length == 0){
-                        pieceMove.append("<div class='black-piece'>");
-				        board[newPiecePlace[0]][newPiecePlace[1]] = 1;
-                    }
-
-                }
-				
-			}else if(pieceColor==-1){
-                var pieceMove = $('.white-box[name=' + newPiecePlace + ']');
-                if(newPiecePlace[0] == '7'){
-				    $(pieceMove.append("<div class='white-piece'>").children()[0]).append("<div class='king-piece'>");
-				    board[newPiecePlace[0]][newPiecePlace[1]] = -2;
-
-                }else{
-                    if(pieceMove.children().length == 0){
-                        pieceMove.append("<div class='white-piece'>");
-                        board[newPiecePlace[0]][newPiecePlace[1]] = -1;
-                    }
-
-                }
-			}
-
+			addPieceToNewPlace(pieceColor, newPiecePlace);
 
 			isSelected = false;
 
@@ -365,16 +347,41 @@ function moveSelectedPiece(placeTomove, newPiecePlace, pieceColor){
 			rigthPiecePlace = null;
 			leftPiecePlace = null;
 
-            onKeepJumping(newPiecePlace)
+            if(opponentMove != null){
+                opponentMove = null;
+                keepJumping = null;
+            }
 
-            handPlay = (handPlay == 1) ? -1 : 1;
+            onKeepJumping(newPiecePlace);
+
+            handPlay = (handPlay > 0) ? -1 : 1;
 
             makeOpponentJump(newPiecePlace);
 		}
 		
 	}
 
+
 }
+
+
+function addPieceToNewPlace(pieceClr, newPiecePL){
+    var pieceMove = $('.white-box[name=' + newPiecePL + ']')
+    var kingPlace = (pieceClr == 1) ? '0' : '7';
+    var classDiv = (pieceClr == 1) ? 'black-piece' : 'white-piece';
+
+    if(newPiecePL[0] == kingPlace){
+        $(pieceMove.append("<div class=' " + classDiv + " '>").children()[0]).append("<div class='king-piece'>");
+        board[newPiecePL[0]][newPiecePL[1]] = (pieceClr == 1) ? 2 : -2;
+
+    }else{
+        if(pieceMove.children().length == 0){
+            pieceMove.append("<div class=' " + classDiv + " '>");
+            board[newPiecePL[0]][newPiecePL[1]] = pieceClr;
+        }
+    }
+}
+
 
 function clearBoxColored() {
     $('.white-box[name=' + selectedPiece + ']').css("background-color", "white");
@@ -383,9 +390,10 @@ function clearBoxColored() {
 }
 
 
+
 function onKeepJumping(newPlace) {
     if(keepJumping != null){
-        var leftRightBox = [];
+        var leftRightBox = [null, null];
         var coordX = parseInt(newPlace[0]);
         var coordY = parseInt(newPlace[1]);
 
@@ -407,56 +415,57 @@ function makeOpponentJump(placeMoved){
     var leftRightBox = [];
     var coordX = parseInt(placeMoved[0]);
     var coordY = parseInt(placeMoved[1]);
-
+    
     if(selectedPieceColor == -1){
-        keepJumping = 1;
-        leftRightBox = getleftRightIndex(coordX, coordY);
-        keepJumping = null;
+        checkOpponentMove(coordX, coordY, 1);
 
+    }else if(selectedPieceColor == 1){
+        checkOpponentMove(coordX, coordY, -1);
+    }
+
+}
+
+
+function checkOpponentMove(cX, cY , opponent) {
+    keepJumping = 1;
+    leftRightBox = getleftRightIndex(cX, cY);
+    keepJumping = null;
+
+    var bothSideToMove = null;
+
+    if(leftRightBox[0] != null && leftRightBox[1] != null){
+        if(board[leftRightBox[0][0]][leftRightBox[0][1]] == opponent){
+            if(board[leftRightBox[1][0]][leftRightBox[1][1]] == opponent)
+                bothSideToMove = 1;
+        }
+    }
+
+    if(bothSideToMove == null){
         if(leftRightBox[0] != null){
-            if(board[leftRightBox[0][0]][leftRightBox[0][1]] == 1){
-                selectedPieceColor = 1;
-                opponentJump = leftRightBox[0][0] + '' + leftRightBox[0][1]; 
+            if(board[leftRightBox[0][0]][leftRightBox[0][1]] == opponent){
+                selectedPieceColor = opponent;
                 coloredOnJumpPiece(parseInt(selectedPiece[0]), parseInt(selectedPiece[1]), 'R');
+                if(keepJumping != null)
+                    opponentJump = leftRightBox[0][0] + '' + leftRightBox[0][1]; 
+                
             }
         }
 
         if(leftRightBox[1] != null){
-            if(board[leftRightBox[1][0]][leftRightBox[1][1]] == 1){
-                selectedPieceColor = 1;
-                opponentJump = leftRightBox[1][0] + '' + leftRightBox[1][1]; 
+            if(board[leftRightBox[1][0]][leftRightBox[1][1]] == opponent){
+                selectedPieceColor = opponent;
                 coloredOnJumpPiece(parseInt(selectedPiece[0]), parseInt(selectedPiece[1]), 'L');
+                if(keepJumping != null)
+                    opponentJump = leftRightBox[1][0] + '' + leftRightBox[1][1]; 
             }
         }
 
+    }else{
+        opponentMove = 1;
+        selectedPieceColor = opponent;
 
-
-    }else if(selectedPieceColor == 1){
-        keepJumping = 1;
-        leftRightBox = getleftRightIndex(coordX, coordY);
-        keepJumping = null;
-
-
-
-        if(leftRightBox[0] != null){
-            if(board[leftRightBox[0][0]][leftRightBox[0][1]] == -1 && board[leftRightBox[1][0]][leftRightBox[1][1]] == 0){
-                selectedPieceColor = -1;
-                opponentJump = leftRightBox[0][0] + '' + leftRightBox[0][1]; 
-                coloredOnJumpPiece(parseInt(selectedPiece[0]), parseInt(selectedPiece[1]), 'R');
-            }
-
-        }
-
-        else if(leftRightBox[1] != null)
-            if(board[leftRightBox[1][0]][leftRightBox[1][1]] == -1 && board[leftRightBox[0][0]][leftRightBox[0][1]] == 0){
-                selectedPieceColor = -1;
-                opponentJump = leftRightBox[1][0] + '' + leftRightBox[1][1]; 
-                coloredOnJumpPiece(parseInt(selectedPiece[0]), parseInt(selectedPiece[1]), 'L');
-            
-        }
 
     }
 
-
-
+    
 }
