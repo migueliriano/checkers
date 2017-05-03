@@ -147,10 +147,12 @@ function setPieceMovement(){
         if(kingSelected != null){
             
             if(pieceRemove != null){
-                if(rigthPiecePlace == (coordX + '' + coordY))
+                if(rigthPiecePlace == (coordX + '' + coordY)){
                     jumpSelectedKing(rigthPiecePlace);
-                if(leftPiecePlace == (coordX + '' + coordY))
+                }
+                if(leftPiecePlace == (coordX + '' + coordY)){
                     jumpSelectedKing(leftPiecePlace);
+                }
             }else{
                 if(board[kingSelected[0]][kingSelected[1]] == 2){
                     moveSelectedKing(coordX + '' + coordY);
@@ -394,7 +396,7 @@ function moveSelectedPiece(placeTomove, newPiecePlace, pieceColor){
                 turnToMoveText();
             }
 
-            console.log(keepJumping, selectedPieceColor);
+           
 
 		}		
 	}
