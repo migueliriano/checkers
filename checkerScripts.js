@@ -4,6 +4,8 @@ init();
 function init(){
 	createCheckersBoard();
 	addPiecesOnBoard();
+
+    document.getElementById('btn-newGame').onclick = makeNewGame;
 }
 
 
@@ -114,6 +116,16 @@ var opponentMove = null;
 var kingListMove = [null, null, null, null];
 var kingSelected = null;
 var hasNotJump = false;
+
+
+if(localStorage){
+    try{
+        loadPieceMove();
+    }catch(e){
+        storePieceMove();
+    }
+}
+
 
 
 function setPieceMovement(){
@@ -236,6 +248,7 @@ function coloredPiecePlaces(left, right) {
         }
     }
 
+    storePieceMove();
 }
 
 function colorBoxInYellow(box){
@@ -366,17 +379,12 @@ function moveSelectedPiece(placeTomove, newPiecePlace, pieceColor){
                 $('.white-box[name=' + pieceRemove + ']').children().remove();
                 board[pieceRemove[0]][pieceRemove[1]] = 0;
                 pieceRemove = null;
-                storePieceMove(selectedPiece, newPiecePlace, 'Jump');
-            }else{
-                storePieceMove(selectedPiece, newPiecePlace, 'Move');
             }
 
             $('.white-box[name=' + selectedPiece + ']').children().remove();
             board[selectedPiece[0]][selectedPiece[1]] = 0;
 
 			addPieceToNewPlace(pieceColor, newPiecePlace);
-
-
 
 			isSelected = false;
 
@@ -399,8 +407,7 @@ function moveSelectedPiece(placeTomove, newPiecePlace, pieceColor){
                 turnToMoveText();
             }
 
-           
-
+           storePieceMove();
 		}		
 	}
 
@@ -424,7 +431,6 @@ function addPieceToNewPlace(pieceClr, newPiecePL){
             board[newPiecePL[0]][newPiecePL[1]] = pieceClr;
         }
     }
-
 }
 
 
@@ -600,6 +606,7 @@ function moveSelectedKing(newKingPlace){
         kingSelected = null;
 
         turnToMoveText();
+        storePieceMove();
 
     }
 
@@ -628,8 +635,9 @@ function jumpSelectedKing(newKingPlace){
     selectedPieceColor = (selectedPieceColor > 0 ) ? 1 : -1;
 
     makeOpponentJump(newKingPlace);
-
     clearBoxInYellow(newKingPlace);
+
+    storePieceMove();
 }
 
 
@@ -656,11 +664,106 @@ function turnToMoveText() {
     $('#turn-text').text( turn );
 }
 
-function storePieceMove(currentPlace, newPlace, typeMove) {
+function storePieceMove() {
+    localStorage.setItem('board', JSON.stringify(board));
+    localStorage.setItem('handPlay', handPlay);
+    localStorage.setItem('selectedPieceColor', selectedPieceColor);
+    localStorage.setItem('isSelected', isSelected);
+    localStorage.setItem('rigthPiecePlace', rigthPiecePlace);
+    localStorage.setItem('leftPiecePlace', leftPiecePlace);
+    localStorage.setItem('selectedPiece', selectedPiece);
+    localStorage.setItem('kingListMove', JSON.stringify(kingListMove));
+    localStorage.setItem('kingSelected', kingSelected);
+}
 
-    var piece = (selectedPieceColor < 0) ? 'Brown' : 'Black';
+function loadPieceMove() {
+    clearBoard();
 
-    $('.list-move').append('<li>'+ typeMove +' '+ piece +': From '+ currentPlace +' To ' +newPlace+'</li>');
-    $('.list-move').scrollTop($('.list-move')[0].scrollHeight);
+    var boardState =  JSON.parse(localStorage.getItem('board')) ;
+    board = boardState;
+    var rows = $('#board tbody').children();
+
+    for(var i = 0; i < 8; i++){
+        var row = $(rows[i]);
+        addPiecesInRow(row.children(), boardState[i]);
+    }
+
+    selectedPieceColor = localStorage.getItem('selectedPieceColor');
+    isSelected = (localStorage.getItem('isSelected') == 'true') ? true : false;
+
+    rigthPiecePlace = localStorage.getItem('rigthPiecePlace');
+    leftPiecePlace = localStorage.getItem('leftPiecePlace');
+    
+    selectedPiece = localStorage.getItem('selectedPiece');
+    kingListMove =  JSON.parse(localStorage.getItem('kingListMove'));
+
+    handPlay = parseInt(localStorage.getItem('handPlay'));
+    var turn = (handPlay > 0) ? 'Black' : 'Brown';
+    $('#turn-text').text( turn );
+    
+}
+
+
+function addPiecesInRow(boxes, boardRow) {
+    for(var i = 0; i < 8; i++){
+        
+        if(boardRow[i] == -1){
+            $(boxes[i]).append("<div class= white-piece>");
+        }else if(boardRow[i] == 1){
+            $(boxes[i]).append("<div class= black-piece>");
+        }else if(boxes[i] == -2){
+            $(pieceMove.append("<div class= white-piece>").children()[0]).append("<div class='king-piece'>");
+        }else if(boardRow[i] == 2){
+            $(pieceMove.append("<div class= black-piece>").children()[0]).append("<div class='king-piece'>");
+        }
+
+    }
+
 }
  
+
+function clearBoard() {
+    var rows = $('#board tbody').children();
+    for(var i = 0; i < 8; i++){
+        $(rows[i]).children().children().remove();
+    }
+ }
+
+ function nullAllVariable() {
+    board = [
+                 [-1, 0,-1, 0,-1, 0,-1, 0],
+                 [ 0,-1, 0,-1, 0,-1, 0,-1],
+                 [-1, 0,-1, 0,-1, 0,-1, 0],
+                 [ 0, 0, 0, 0, 0, 0, 0, 0],
+                 [ 0, 0, 0, 0, 0, 0, 0, 0],
+                 [ 0, 1, 0, 1, 0, 1, 0, 1],
+                 [ 1, 0, 1, 0, 1, 0, 1, 0],
+                 [ 0, 1, 0, 1, 0, 1, 0, 1]
+            ];
+
+    isSelected = false;
+    selectedPiece = null;
+    rigthPiecePlace = null;
+    leftPiecePlace = null;
+    selectedPieceColor = null;
+    pieceRemove = null;
+    handPlay = 1;
+    keepJumping = null;
+    opponentJump = null;
+    currentSelectedPiece = null;
+    opponentMove = null;
+    kingListMove = [null, null, null, null];
+    kingSelected = null;
+    hasNotJump = false;
+
+    $('#turn-text').text( 'Black' );
+     
+ }
+
+ function makeNewGame() {
+    localStorage.clear();
+    clearBoard();
+    nullAllVariable();
+    addPiecesOnBoard();
+ }
+
