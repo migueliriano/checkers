@@ -366,12 +366,17 @@ function moveSelectedPiece(placeTomove, newPiecePlace, pieceColor){
                 $('.white-box[name=' + pieceRemove + ']').children().remove();
                 board[pieceRemove[0]][pieceRemove[1]] = 0;
                 pieceRemove = null;
+                storePieceMove(selectedPiece, newPiecePlace, 'Jump');
+            }else{
+                storePieceMove(selectedPiece, newPiecePlace, 'Move');
             }
 
             $('.white-box[name=' + selectedPiece + ']').children().remove();
             board[selectedPiece[0]][selectedPiece[1]] = 0;
 
 			addPieceToNewPlace(pieceColor, newPiecePlace);
+
+
 
 			isSelected = false;
 
@@ -385,8 +390,6 @@ function moveSelectedPiece(placeTomove, newPiecePlace, pieceColor){
                 opponentMove = null;
                 keepJumping = null;
             }
-
-            
 
             onKeepJumping(newPiecePlace, pieceColor);
 
@@ -651,4 +654,12 @@ function turnToMoveText() {
     handPlay = (handPlay > 0) ? -1 : 1;
     var turn = (handPlay > 0) ? 'Black' : 'Brown';
     $('#turn-text').text( turn );
+}
+
+function storePieceMove(currentPlace, newPlace, typeMove) {
+
+    var piece = (selectedPieceColor < 0) ? 'Brown' : 'Black';
+
+    $('.list-move').append('<li>'+ typeMove +' '+ piece +': From '+ currentPlace +' To ' +newPlace+'</li>');
+    $('.list-move').scrollTop($('.list-move')[0].scrollHeight);
 }
