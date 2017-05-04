@@ -663,3 +663,4 @@ function storePieceMove(currentPlace, newPlace, typeMove) {
     $('.list-move').append('<li>'+ typeMove +' '+ piece +': From '+ currentPlace +' To ' +newPlace+'</li>');
     $('.list-move').scrollTop($('.list-move')[0].scrollHeight);
 }
+ 
