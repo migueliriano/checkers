@@ -51,3 +51,11 @@
 	background-color:red; 
 	border-radius: 50%;
 }
+
+
+ol{
+	height:80px;
+	width:300px;
+	overflow:hidden; 
+	overflow-y:scroll;
+}
