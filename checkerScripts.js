@@ -139,8 +139,10 @@ function setPieceMovement(){
 
     if(handPlay > 0){
     	if(board[coordX][coordY] == 1){
+            kingSelected = null;
             selectedPieceColor = handPlay;
     		getleftRightIndex(coordX, coordY);
+
     	}else if(board[coordX][coordY] == 2){
             colorKingMove(coordX, coordY, 2);
         }
@@ -148,6 +150,7 @@ function setPieceMovement(){
 
     if(handPlay < 0){  
         if(board[coordX][coordY] == -1){
+            kingSelected = null;
             selectedPieceColor = handPlay;
     		getleftRightIndex(coordX, coordY);  
     	}else if(board[coordX][coordY] == -2){
@@ -155,11 +158,8 @@ function setPieceMovement(){
         }
     }
 
-
     if(isSelected){
-       
         if(kingSelected != null){
-            
             if(pieceRemove != null){
                 if(rigthPiecePlace == (coordX + '' + coordY)){
                     jumpSelectedKing(rigthPiecePlace);
@@ -203,6 +203,17 @@ function getleftRightIndex(crdX, crdY){
 
 	selectedPiece = crdX + '' + crdY;
 
+
+    if(leftBoxIndex[0] < 0 || leftBoxIndex[0] > 7)
+        leftBoxIndex = null;
+    if(leftBoxIndex[1] < 0 || leftBoxIndex[1] > 7)
+        leftBoxIndex = null;
+
+    if(rightBoxIndex[0] < 0 || rightBoxIndex[0] > 7)
+        rightBoxIndex = null;
+    if(rightBoxIndex[1] < 0 || rightBoxIndex[1] > 7)
+        rightBoxIndex = null;
+
     if(keepJumping != null){
         if(opponentMove == null)
             return [leftBoxIndex, rightBoxIndex];
@@ -215,6 +226,9 @@ function getleftRightIndex(crdX, crdY){
 function coloredPiecePlaces(left, right) {
 
     clearBoxColored();
+    clearKingMoveColor();
+    if(kingSelected != null)
+        kingSelected = null;
 
 
 
@@ -282,7 +296,6 @@ function coloredLeftOrRightPiece(leftPiece, rightPiece, pieceSide) {
 
     
     }else{
-
         var rightX = parseInt(rightPiece[0]);
         var rightY = parseInt(rightPiece[1]);
 
@@ -384,6 +397,8 @@ function moveSelectedPiece(placeTomove, newPiecePlace, pieceColor){
                 pieceRemove = null;
             }
 
+
+
             $('.white-box[name=' + selectedPiece + ']').children().remove();
             board[selectedPiece[0]][selectedPiece[1]] = 0;
 
@@ -407,9 +422,9 @@ function moveSelectedPiece(placeTomove, newPiecePlace, pieceColor){
 
             if(keepJumping == null){
                 makeOpponentJump(newPiecePlace);
-                turnToMoveText();
             }
 
+           turnToMoveText();
            storePieceMove();
 		}		
 	}
@@ -425,8 +440,10 @@ function addPieceToNewPlace(pieceClr, newPiecePL){
     var classDiv = (pieceClr == 1) ? 'black-piece' : 'white-piece';
 
     if(newPiecePL[0] == kingPlace){
-        $(pieceMove.append("<div class=' " + classDiv + " '>").children()[0]).append("<div class='king-piece'>");
-        board[newPiecePL[0]][newPiecePL[1]] = (pieceClr == 1) ? 2 : -2;
+        if(pieceMove.children().length == 0){
+            $(pieceMove.append("<div class=' " + classDiv + " '>").children()[0]).append("<div class='king-piece'>");
+            board[newPiecePL[0]][newPiecePL[1]] = (pieceClr == 1) ? 2 : -2;
+        }
 
     }else{
         if(pieceMove.children().length == 0){
@@ -470,6 +487,7 @@ function makeOpponentJump(placeMoved){
     var leftRightBox = [];
     var coordX = parseInt(placeMoved[0]);
     var coordY = parseInt(placeMoved[1]);
+
     
     if(selectedPieceColor == -1){
         checkOpponentMove(coordX, coordY, 1);
@@ -556,31 +574,39 @@ function colorKingMove(x, y, kingPieceClr) {
 
 
 function checkColorKingMove(pos, side, index){
+    
+    
+    var x = parseInt(pos[0]);
+    var y = parseInt(pos[1]);
 
-    if(board[pos[0]][pos[1]] == 0){
-        kingListMove[index] = (pos[0]) + '' + (pos[1]);
+    if(board[x][y] == 0){
+        kingListMove[index] = (x) + '' + (y);
         colorBoxInYellow(kingListMove[index]);
-    }else if(board[pos[0]][pos[1]] < 0){
-        if( (board[pos[0]][pos[1]] == -1 || board[pos[0]][pos[1]] == -2) && handPlay == 1){
+
+    }else if(board[x][y] < 0){
+        if( (board[x][y] == -1 || board[x][y] == -2) && handPlay == 1){
             selectedPieceColor = 2;
-            coloredOnJumpPiece(pos[0], pos[1], side);
+            coloredOnJumpPiece(x, y, side);
             clearKingMoveColor();
             return true;
-        }else if(board[pos[0]][pos[1]] == 0 && handPlay == -1){
-            kingListMove[index] = (pos[0]) + '' + (pos[1]);
+        }else if(board[x][y] == 0 && handPlay == -1){
+            kingListMove[index] = (x) + '' + (y);
             colorBoxInYellow(kingListMove[index]);
         }
-    }else if(board[pos[0]][pos[1]] > 0){
-        if( (board[pos[0]][pos[1]] == 1 || board[pos[0]][pos[1]] == 2) && handPlay == -1){
+
+    }else if(board[x][y] > 0){
+        if( (board[x][y] == 1 || board[x][y] == 2) && handPlay == -1){
             selectedPieceColor = -2;
-            coloredOnJumpPiece(pos[0], pos[1], side);
+            coloredOnJumpPiece(x, y, side);
             clearKingMoveColor();
             return true;
-        }else if(board[pos[0]][pos[1]] == 0 && handPlay == 1){
-            kingListMove[index] = (pos[0]) + '' + (pos[1]);
+        }else if(board[x][y] == 0 && handPlay == 1){
+            kingListMove[index] = (x) + '' + (y);
             colorBoxInYellow(kingListMove[index]);
         }
+
     }
+
 
 }
 
@@ -603,6 +629,7 @@ function moveSelectedKing(newKingPlace){
         board[kingSelected[0]][kingSelected[1]] = 0;
 
         clearKingMoveColor();
+        clearBoxColored();
         
         kingListMove = [null, null, null, null];
         isSelected = false;
@@ -617,16 +644,16 @@ function moveSelectedKing(newKingPlace){
 
 
 function jumpSelectedKing(newKingPlace){
-    $('.white-box[name=' + kingSelected + ']').children().remove();
-    board[kingSelected[0]][kingSelected[1]] = 0;
-
-    $('.white-box[name=' + pieceRemove + ']').children().remove();
+    
     countPieceRemove(pieceRemove);
-    board[pieceRemove[0]][pieceRemove[1]] = 0;
 
-    var pieceMove = $('.white-box[name=' + newKingPlace + ']');
+    $('.white-box[name=' + kingSelected + ']').children().remove();
+    $('.white-box[name=' + pieceRemove + ']').children().remove();
     
     addKingToNewPlace(newKingPlace);
+
+    board[kingSelected[0]][kingSelected[1]] = 0;
+    board[pieceRemove[0]][pieceRemove[1]] = 0;
     
     kingListMove = [null, null, null, null];
     isSelected = false;
@@ -722,12 +749,11 @@ function addPiecesInRow(boxes, boardRow) {
             $(boxes[i]).append("<div class= white-piece>");
         }else if(boardRow[i] == 1){
             $(boxes[i]).append("<div class= black-piece>");
-        }else if(boxes[i] == -2){
-            $(pieceMove.append("<div class= white-piece>").children()[0]).append("<div class='king-piece'>");
+        }else if(boardRow[i] == -2){
+            $($(boxes[i]).append("<div class= white-piece>").children()[0]).append("<div class='king-piece'>");
         }else if(boardRow[i] == 2){
-            $(pieceMove.append("<div class= black-piece>").children()[0]).append("<div class='king-piece'>");
+            $($(boxes[i]).append("<div class= black-piece>").children()[0]).append("<div class='king-piece'>");
         }
-
     }
 
 }
@@ -792,10 +818,11 @@ function clearBoard() {
         $('.yellow-counter').text(yellowCounter);
     }
 
-    if(blackCounter < 0){
+    if(blackCounter <= 0){
         $('.message-win').text('PLAYER 2 WIN');
         $('.message-win').css("visibility", "visible");
-    }else if(yellowCounter < 0){
+
+    }else if(yellowCounter <= 0){
         $('.message-win').text('PLAYER 1 WIN');
         $('.message-win').css("visibility", "visible");
     }
