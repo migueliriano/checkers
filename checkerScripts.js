@@ -118,7 +118,7 @@ var kingSelected = null;
 var hasNotJump = false;
 
 
-if(localStorage){
+if(window.localStorage){
     try{
         loadPieceMove();
     }catch(e){
@@ -665,21 +665,21 @@ function turnToMoveText() {
 }
 
 function storePieceMove() {
-    localStorage.setItem('board', JSON.stringify(board));
-    localStorage.setItem('handPlay', handPlay);
-    localStorage.setItem('selectedPieceColor', selectedPieceColor);
-    localStorage.setItem('isSelected', isSelected);
-    localStorage.setItem('rigthPiecePlace', rigthPiecePlace);
-    localStorage.setItem('leftPiecePlace', leftPiecePlace);
-    localStorage.setItem('selectedPiece', selectedPiece);
-    localStorage.setItem('kingListMove', JSON.stringify(kingListMove));
-    localStorage.setItem('kingSelected', kingSelected);
+    window.localStorage.setItem('board', JSON.stringify(board));
+    window.localStorage.setItem('handPlay', handPlay);
+    window.localStorage.setItem('selectedPieceColor', selectedPieceColor);
+    window.localStorage.setItem('isSelected', isSelected);
+    window.localStorage.setItem('rigthPiecePlace', rigthPiecePlace);
+    window.localStorage.setItem('leftPiecePlace', leftPiecePlace);
+    window.localStorage.setItem('selectedPiece', selectedPiece);
+    window.localStorage.setItem('kingListMove', JSON.stringify(kingListMove));
+    window.localStorage.setItem('kingSelected', kingSelected);
 }
 
 function loadPieceMove() {
     clearBoard();
 
-    var boardState =  JSON.parse(localStorage.getItem('board')) ;
+    var boardState =  JSON.parse(window.localStorage.getItem('board')) ;
     board = boardState;
     var rows = $('#board tbody').children();
 
@@ -688,16 +688,16 @@ function loadPieceMove() {
         addPiecesInRow(row.children(), boardState[i]);
     }
 
-    selectedPieceColor = localStorage.getItem('selectedPieceColor');
-    isSelected = (localStorage.getItem('isSelected') == 'true') ? true : false;
+    selectedPieceColor = window.localStorage.getItem('selectedPieceColor');
+    isSelected = (window.localStorage.getItem('isSelected') == 'true') ? true : false;
 
-    rigthPiecePlace = localStorage.getItem('rigthPiecePlace');
-    leftPiecePlace = localStorage.getItem('leftPiecePlace');
+    rigthPiecePlace = window.localStorage.getItem('rigthPiecePlace');
+    leftPiecePlace = window.localStorage.getItem('leftPiecePlace');
     
-    selectedPiece = localStorage.getItem('selectedPiece');
-    kingListMove =  JSON.parse(localStorage.getItem('kingListMove'));
+    selectedPiece = window.localStorage.getItem('selectedPiece');
+    kingListMove =  JSON.parse(window.localStorage.getItem('kingListMove'));
 
-    handPlay = parseInt(localStorage.getItem('handPlay'));
+    handPlay = parseInt(window.localStorage.getItem('handPlay'));
     var turn = (handPlay > 0) ? 'Black' : 'Brown';
     $('#turn-text').text( turn );
     
@@ -761,9 +761,8 @@ function clearBoard() {
  }
 
  function makeNewGame() {
-    localStorage.clear();
+    window.localStorage.clear();
     clearBoard();
     nullAllVariable();
     addPiecesOnBoard();
  }
-
