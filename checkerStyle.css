@@ -51,3 +51,12 @@
 	background-color:red; 
 	border-radius: 50%;
 }
+
+
+h4, .container{
+	margin: 10px;
+}
+
+#btn-newGame{
+	margin: 10px;
+}
