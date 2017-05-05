@@ -116,6 +116,8 @@ var opponentMove = null;
 var kingListMove = [null, null, null, null];
 var kingSelected = null;
 var hasNotJump = false;
+var blackCounter = 12;
+var yellowCounter = 12;
 
 
 if(window.localStorage){
@@ -377,6 +379,7 @@ function moveSelectedPiece(placeTomove, newPiecePlace, pieceColor){
 
             if(pieceRemove != null){
                 $('.white-box[name=' + pieceRemove + ']').children().remove();
+                countPieceRemove(pieceRemove);
                 board[pieceRemove[0]][pieceRemove[1]] = 0;
                 pieceRemove = null;
             }
@@ -618,6 +621,7 @@ function jumpSelectedKing(newKingPlace){
     board[kingSelected[0]][kingSelected[1]] = 0;
 
     $('.white-box[name=' + pieceRemove + ']').children().remove();
+    countPieceRemove(pieceRemove);
     board[pieceRemove[0]][pieceRemove[1]] = 0;
 
     var pieceMove = $('.white-box[name=' + newKingPlace + ']');
@@ -660,7 +664,7 @@ function clearKingMoveColor(){
 
 function turnToMoveText() {
     handPlay = (handPlay > 0) ? -1 : 1;
-    var turn = (handPlay > 0) ? 'Black' : 'Brown';
+    var turn = (handPlay > 0) ? 'Black' : 'Yellow';
     $('#turn-text').text( turn );
 }
 
@@ -674,6 +678,8 @@ function storePieceMove() {
     window.localStorage.setItem('selectedPiece', selectedPiece);
     window.localStorage.setItem('kingListMove', JSON.stringify(kingListMove));
     window.localStorage.setItem('kingSelected', kingSelected);
+    window.localStorage.setItem('blackCounter', blackCounter);
+    window.localStorage.setItem('yellowCounter', yellowCounter);
 }
 
 function loadPieceMove() {
@@ -697,8 +703,13 @@ function loadPieceMove() {
     selectedPiece = window.localStorage.getItem('selectedPiece');
     kingListMove =  JSON.parse(window.localStorage.getItem('kingListMove'));
 
+    blackCounter = window.localStorage.getItem('blackCounter');
+     $('.black-counter').text(blackCounter);
+    yellowCounter = window.localStorage.getItem('yellowCounter');
+     $('.yellow-counter').text(yellowCounter);
+
     handPlay = parseInt(window.localStorage.getItem('handPlay'));
-    var turn = (handPlay > 0) ? 'Black' : 'Brown';
+    var turn = (handPlay > 0) ? 'Black' : 'Yellow';
     $('#turn-text').text( turn );
     
 }
@@ -757,6 +768,11 @@ function clearBoard() {
     hasNotJump = false;
 
     $('#turn-text').text( 'Black' );
+
+    blackCounter = 12;
+    yellowCounter = 12;
+    $('.black-counter').text(blackCounter);
+    $('.yellow-counter').text(yellowCounter);
      
  }
 
@@ -765,4 +781,22 @@ function clearBoard() {
     clearBoard();
     nullAllVariable();
     addPiecesOnBoard();
+ }
+
+ function countPieceRemove(pieceCD){
+    if(board[pieceCD[0]][pieceCD[1]] > 0){
+        blackCounter -= 1;
+        $('.black-counter').text(blackCounter);
+    }else if(board[pieceCD[0]][pieceCD[1]] < 0){
+        yellowCounter -= 1;
+        $('.yellow-counter').text(yellowCounter);
+    }
+
+    if(blackCounter < 0){
+        $('.message-win').text('PLAYER 2 WIN');
+        $('.message-win').css("visibility", "visible");
+    }else if(yellowCounter < 0){
+        $('.message-win').text('PLAYER 1 WIN');
+        $('.message-win').css("visibility", "visible");
+    }
  }
